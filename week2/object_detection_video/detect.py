@@ -1,20 +1,12 @@
 from ultralytics import YOLO
-import os
 
-model = YOLO("yolo26n.pt")  # downloads pretrained weights automatically
+# 1. Load the model (It will use the yolo26n.pt file in your folder)
+model = YOLO('yolo26n.pt') 
 
-input_dir = "frames"
-output_dir = "annotated_frames"
-os.makedirs(output_dir, exist_ok=True)
+# 2. Run detection on your video
+# This will save the output in a folder named 'runs'
+results = model.predict(source='raw_video.mp4', save=True)
 
-frames = sorted([f for f in os.listdir(input_dir) if f.endswith(".jpg")])
-total = len(frames)
-
-for i, fname in enumerate(frames):
-    input_path = os.path.join(input_dir, fname)
-    results = model(input_path, verbose=False)
-    results[0].save(filename=os.path.join(output_dir, fname))
-    if i % 100 == 0:
-        print(f"Processed {i}/{total} frames...")
-
-print("Done! All frames annotated.")
+# 3. Print the results to the terminal to verify
+for result in results:
+    print(result.boxes)
